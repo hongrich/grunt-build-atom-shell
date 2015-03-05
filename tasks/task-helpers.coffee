@@ -28,11 +28,12 @@ module.exports = (grunt) ->
           destinationPath = path.join(destination, path.relative(source, sourcePath))
           copyFile(sourcePath, destinationPath)
         onDirectory = (sourcePath) ->
+          destinationPath = path.join(destination, path.relative(source, sourcePath))
           if fs.isSymbolicLinkSync(sourcePath)
-            destinationPath = path.join(destination, path.relative(source, sourcePath))
             copyFile(sourcePath, destinationPath)
             false
           else
+            grunt.file.mkdir(destinationPath, fs.statSync(sourcePath).mode) unless grunt.file.exists(destinationPath)
             true
         fs.traverseTreeSync source, onFile, onDirectory
       catch error
